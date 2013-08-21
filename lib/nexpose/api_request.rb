@@ -42,6 +42,7 @@ module Nexpose
 			@uri = URI.parse(@url)
 			@http = Net::HTTP.new(@uri.host, @uri.port)
 			@http.use_ssl = true
+			@http.read_timeout = 86400
 			#
 			# XXX: This is obviously a security issue, however, we handle this at the client level by forcing
 			#      a confirmation when the nexpose host is not localhost. In a perfect world, we would present
@@ -99,7 +100,6 @@ module Nexpose
 			rescue ::Timeout::Error
 				if @conn_tries < 5
 					@conn_tries += 1
-					retry
 				end
 				@error = "NeXpose host did not respond"
 			rescue ::Errno::EHOSTUNREACH, ::Errno::ENETDOWN, ::Errno::ENETUNREACH, ::Errno::ENETRESET, ::Errno::EHOSTDOWN, ::Errno::EACCES, ::Errno::EINVAL, ::Errno::EADDRNOTAVAIL
